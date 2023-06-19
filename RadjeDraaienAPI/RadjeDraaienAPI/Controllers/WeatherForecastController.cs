@@ -35,18 +35,41 @@ public class WeatherForecastController : ControllerBase
         .ToArray();
     }
 
-    [HttpGet("{id}")]
-    public int Spin(int id)
+    [HttpGet("{power}/{userid}")]
+    public ActionResult<int> Spin(int power, string userid)
     {
-        _socketService.SpinWheel(id);
-        _wheelData.result = new Result(); ;
-        return id;
+        if (_wheelData.Current.DeviceID == userid) {
+            _socketService.SpinWheel(power);
+            _wheelData.result = new Result();
+            _wheelData.Current = new User();
+            return Ok(power);
+        }
+        return BadRequest(power);
     }
     [HttpPost("PostResult")]
     public Result Post([FromBody] Result result)
     {
         _wheelData.result = result;
         return _wheelData.result;
+    }
+
+    [HttpPost("AddToQueue")]
+    public User AddToQueue([FromBody] User user)
+    {
+        if (_wheelData.Queue.Where(X => X.UserName == user.UserName).Count() == 0) {
+            _wheelData.Queue.Add(user);
+        }
+        return user;
+    }
+
+    [HttpGet("NextUser")]
+    public User NextUser()
+    {
+        User user = _wheelData.Queue.FirstOrDefault(new User());
+        _wheelData.Current = user;
+        _socketService.NextUser(user.UserName);
+        _wheelData.Queue.Remove(user);
+        return user;
     }
 
     [HttpGet("GetResult")]

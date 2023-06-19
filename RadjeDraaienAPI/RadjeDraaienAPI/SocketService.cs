@@ -16,6 +16,12 @@ namespace RadjeDraaienAPI
             await client.ConnectAsync();
             await client.EmitAsync("send", id.ToString());
         }
-	}
+
+        public async void NextUser(string user)
+        {
+            await client.ConnectAsync();
+            await client.EmitAsync("senduser", user);
+        }
+    }
 }
 
