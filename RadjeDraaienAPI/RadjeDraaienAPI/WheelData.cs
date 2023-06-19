@@ -3,7 +3,7 @@ namespace RadjeDraaienAPI
 {
 	public class WheelData
 	{
-		public string resultColor = "";
+		public Result result;
 	}
 }
 

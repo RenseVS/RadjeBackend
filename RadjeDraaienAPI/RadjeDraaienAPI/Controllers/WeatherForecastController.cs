@@ -39,21 +39,21 @@ public class WeatherForecastController : ControllerBase
     public int Spin(int id)
     {
         _socketService.SpinWheel(id);
-        _wheelData.resultColor = "";
+        _wheelData.result = new Result(); ;
         return id;
     }
     [HttpPost("PostResult")]
-    public string Post([FromBody] Result result)
+    public Result Post([FromBody] Result result)
     {
-        _wheelData.resultColor = result.Color;
-        return _wheelData.resultColor;
+        _wheelData.result = result;
+        return _wheelData.result;
     }
 
     [HttpGet("GetResult")]
     public Result getResult()
     {
-        Result color = new Result(_wheelData.resultColor);
-        return color;
+        var result = _wheelData.result;
+        return result;
     }
 }
 
